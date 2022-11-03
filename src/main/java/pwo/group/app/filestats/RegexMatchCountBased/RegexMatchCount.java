@@ -10,7 +10,7 @@ public abstract class RegexMatchCount extends TypeNamedStatisticalProperty {
     private final Integer matchCount;
     
     public RegexMatchCount(String text, Pattern regex) {
-        throw new UnsupportedOperationException();
+        matchCount = Math.toIntExact(regex.matcher(text).results().count());
     }
     
     @Override
