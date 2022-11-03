@@ -5,12 +5,12 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 import pwo.group.app.filestats.RegexMatchCountBased.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
- * @author Aleksandr Kovalyov
+ * @author Vladyslav Hutsenko
  */
 public class JavaTests {
     
