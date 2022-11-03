@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
- * @author Aleksandr Kovalyov
+ * @author Bohdan Basistyi
  */
 public class GUITest {
     

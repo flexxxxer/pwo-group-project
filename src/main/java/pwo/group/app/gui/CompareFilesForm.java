@@ -1,20 +1,60 @@
 package pwo.group.app.gui;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Stream;
+import javax.swing.table.DefaultTableModel;
+import pwo.group.app.core.CollectionBuilder;
+import pwo.group.app.fileops.FileComparisonService;
+import pwo.group.app.fileops.FileStatisticService;
+import pwo.group.app.fileops.FileWithStats;
+
 /**
  *
- * @author Aleksandr Kovalyov
+ * @author Bohdan Basistyi
  */
 public class CompareFilesForm extends javax.swing.JFrame {
 
-    /**
-     * Creates new form CompareFilesForm
-     */
     public CompareFilesForm() {
         initComponents();
     }
     
+    /**
+     * Creates new form CompareFilesForm
+     */
     public CompareFilesForm(String filePath1, String filePath2) {
         initComponents();
+        
+        var statisticService = new FileStatisticService();
+        var file1Stats = statisticService.GetFileStatistics(filePath1);
+        var file2Stats = statisticService.GetFileStatistics(filePath2);
+        
+        var file1 = new FileWithStats(filePath1, file1Stats);
+        var file2 = new FileWithStats(filePath2, file2Stats);
+        
+        var fileComparisonService = new FileComparisonService();
+        var filesWithCommonOnly = fileComparisonService.TrimNonCommonProperties(new ArrayList<>(Arrays.asList(file1, file2)));
+        
+        var columns = Stream.concat(Stream.of("Property"), filesWithCommonOnly.stream().map(file -> file.GetFilePath())).toArray(String[]::new);
+        
+        var data = filesWithCommonOnly.get(0).GetStats().stream()
+                .map(prop -> CollectionBuilder.fromCollection(new ArrayList<String>())
+                        .add(prop.GetName())
+                        .addAll(filesWithCommonOnly.stream()
+                                .map(file -> file.GetStats().stream()
+                                        .filter(stat -> stat.getClass() == prop.getClass())
+                                        .findFirst().get().GetValue().toString())
+                                .collect(java.util.stream.Collectors.toCollection(ArrayList::new))
+                        )
+                        .build()
+                )
+                .collect(java.util.stream.Collectors.toCollection(ArrayList::new))
+                .stream()
+                .map(list -> list.toArray(String[]::new))
+                .toArray(String[][]::new);
+        
+        DefaultTableModel model = new DefaultTableModel(data, columns);
+        jTable1.setModel(model);
     }
 
     /**
@@ -26,17 +66,39 @@ public class CompareFilesForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 552, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
         pack();
@@ -78,5 +140,7 @@ public class CompareFilesForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 }
