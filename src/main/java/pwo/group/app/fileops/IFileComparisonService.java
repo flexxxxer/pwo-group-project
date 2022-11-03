@@ -3,7 +3,7 @@ package pwo.group.app.fileops;
 import java.util.ArrayList;
 
 /**
- * @author Aleksandr Kovalyov
+ * @author Vladyslav Hutsenko
  */
 public interface IFileComparisonService {
     ArrayList<FileWithStats> TrimNonCommonProperties(ArrayList<FileWithStats> filesWithStats);
